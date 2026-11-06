@@ -1,16 +1,8 @@
 # Git Integration
 
-**Say here, in one sentence, what Git Integration does for you.**
+**Git Integration backs up your Tessello space to a git repository.**
 
-Every change is saved the moment you make it.
-
-## Counting
-
-Click **Add one** to add one to the count, and **Start again** to set it back to 0. The Widget on the Home shows the count: click it to open Git Integration.
-
-## Your data
-
-The count is kept in your Tessello space, on your computer, and nowhere else. Uninstalling the Module deletes it.
+The `npx tessello sync` command, run in your Modules folder, commits what changes and pushes it to the repository you choose. Git Integration is where you set it up and see how the backup is going.
 
 ## About Git Integration
 

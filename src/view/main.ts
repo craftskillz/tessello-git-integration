@@ -1,4 +1,4 @@
-// The View: the count, with a button to add one and another to start again.
+// The View: the state of the backup and its settings.
 
 import { connect } from "@tessello/sdk";
 import { mount } from "svelte";

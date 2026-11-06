@@ -1,4 +1,4 @@
-// The Widget (size S): the count, and a way into the View.
+// The Widget (size S): a way into the View.
 
 import { connect } from "@tessello/sdk";
 import { mount } from "svelte";

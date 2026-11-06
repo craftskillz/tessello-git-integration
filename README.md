@@ -1,6 +1,6 @@
 # Git Integration
 
-A Tessello Module: say here, in one sentence, what it does for the User.
+Back up your Tessello space to a git repository: set up `npx tessello sync` and see how the backup is going.
 
 Git Integration is a Module of [Tessello](https://github.com/craftskillz/tessello), a composable web app where you build your space from Modules: each one a View, and a Widget on the Home. Its Identifier is `@craftskillz/git-integration`. Everything it keeps stays in your Tessello space, on your computer.
 
@@ -25,7 +25,7 @@ npx tessello validate dist
 
 With [just](https://github.com/casey/just): `just test`, `just typecheck`, `just build` (builds and validates).
 
-`src/lib/` holds what the View and the Widget share (here, the count kept in the Host storage), `src/view/` and `src/widget/` their pages. `dist/` can be zipped and dropped onto Tessello, or copied into your Modules folder. The Module talks to the Host through [`@tessello/sdk`](https://www.npmjs.com/package/@tessello/sdk) and follows the [Convention](https://github.com/craftskillz/tessello/blob/main/convention/CONVENTION.md).
+`src/lib/` holds what the View and the Widget share, `src/view/` and `src/widget/` their pages. `dist/` can be zipped and dropped onto Tessello, or copied into your Modules folder. The Module talks to the Host through [`@tessello/sdk`](https://www.npmjs.com/package/@tessello/sdk) and follows the [Convention](https://github.com/craftskillz/tessello/blob/main/convention/CONVENTION.md).
 
 ## Release
 

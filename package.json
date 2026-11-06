@@ -2,7 +2,7 @@
   "name": "@craftskillz/git-integration",
   "version": "0.0.0",
   "private": true,
-  "description": "Git Integration: a Tessello Module.",
+  "description": "Back up your Tessello space to a git repository: set up tessello sync and see how the backup is going.",
   "license": "MIT",
   "repository": {
     "type": "git",
