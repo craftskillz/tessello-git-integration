@@ -146,3 +146,25 @@ export function withDataModule(config: SyncConfig, id: string, versioned: boolea
   const others = config.dataModules.filter((existing) => existing !== id);
   return { ...config, dataModules: (versioned ? [...others, id] : others).sort() };
 }
+
+/** The folder `git clone` creates for a remote: the last path segment without `.git`; "tessello" when there is none. */
+export function restoreFolder(remote: string): string {
+  const last = remote.trim().replace(/\/+$/, "").split(/[/:]/).pop() ?? "";
+  const folder = last.replace(/\.git$/, "");
+  return /^[A-Za-z0-9._-]+$/.test(folder) && folder !== "." && folder !== ".." ? folder : "tessello";
+}
+
+/** The two commands of a restore, with the remote entered; `<remote>` stands in for an empty remote. */
+export function restoreCommands(remote: string): { clone: string; sync: string } {
+  const trimmed = remote.trim();
+  const folder = restoreFolder(trimmed);
+  const target = trimmed === "" ? "<remote>" : /^[A-Za-z0-9@:/._~+%=-]+$/.test(trimmed) ? trimmed : `'${trimmed.replaceAll("'", "'\\''")}'`;
+  return { clone: `git clone ${target} ${folder}`, sync: `npx tessello sync ${folder}` };
+}
+
+/** The installed Modules whose data is not versioned, so start empty after a restore: sorted by name, this Module left out. */
+export function unversionedModules(status: SyncStatus | null, config: SyncConfig): { id: string; name: string }[] {
+  return listedModules(status, config, null)
+    .filter((module) => !module.versioned)
+    .map(({ id, name }) => ({ id, name }));
+}

@@ -13,12 +13,22 @@
     readSeen,
     readStatus,
     relativeTime,
+    restoreCommands,
+    unversionedModules,
     withDataModule,
   } from "../lib/sync.ts";
 
   let { host }: { host: ConnectedModule } = $props();
 
   const POLL_MS = 3000;
+
+  const PROBLEM_TEXT = {
+    "push-rejected": "problem_push_rejected",
+    auth: "problem_auth",
+    "remote-unreachable": "problem_remote_unreachable",
+    "git-missing": "problem_git_missing",
+    "not-a-modules-folder": "problem_not_a_modules_folder",
+  } as const;
 
   let loaded = $state(false);
   let config = $state.raw<SyncConfig>(readConfig(null));
@@ -28,11 +38,14 @@
   let intervalText = $state("60");
   let intervalInvalid = $state(false);
   let saveError = $state<string | null>(null);
-  let copied = $state(false);
+  let copied = $state<string | null>(null);
   let storedSeen: string[] | null = null;
 
   const running = $derived(isEngineRunning(status, config, now));
   const modules = $derived(listedModules(status, config, seenAtOpen));
+  const commands = $derived(restoreCommands(config.remote));
+  const unversioned = $derived(unversionedModules(status, config));
+  const versionedCount = $derived(modules.filter((module) => module.versioned).length);
   const names = $derived(new Map(status?.installed.map((module) => [module.id, module.name]) ?? []));
 
   async function refresh(): Promise<void> {
@@ -70,11 +83,11 @@
     if (seconds !== null) void save({ ...config, intervalSeconds: seconds });
   }
 
-  async function copyCommand(): Promise<void> {
+  async function copyCommand(id: string, text: string): Promise<void> {
     try {
-      await navigator.clipboard.writeText(t("engine_command"));
-      copied = true;
-      setTimeout(() => (copied = false), 2000);
+      await navigator.clipboard.writeText(text);
+      copied = id;
+      setTimeout(() => copied === id && (copied = null), 2000);
     } catch {
       // Copying is a convenience: the command stays on screen to select.
     }
@@ -114,7 +127,7 @@
         <p>{t("engine_start_instruction")}</p>
         <p class="command">
           <code>{t("engine_command")}</code>
-          <button type="button" aria-label={t("copy_label")} onclick={copyCommand}>{copied ? t("copied") : t("copy")}</button>
+          <button type="button" aria-label={t("copy_label")} onclick={() => copyCommand("engine", t("engine_command"))}>{copied === "engine" ? t("copied") : t("copy")}</button>
         </p>
       {:else}
         <p>{t("engine_running")}</p>
@@ -131,9 +144,18 @@
         <p>{status?.lastPush ? t("last_push", { when: relativeTime(status.lastPush.at, now) }) : t("no_push")}</p>
       {/if}
       {#if running && status?.problem}
-        <p class="problem">
-          {status.problem.kind === "no-config" ? t("problem_no_config") : t("problem_generic", { message: status.problem.message })}
-        </p>
+        {#if status.problem.kind === "no-config"}
+          <p class="problem">{t("problem_no_config")}</p>
+        {:else}
+          <div class="problem">
+            <p>{t(PROBLEM_TEXT[status.problem.kind])}</p>
+            <p class="muted">{t("problem_since", { when: relativeTime(status.problem.since, now) })}</p>
+            <details>
+              <summary>{t("problem_message")}</summary>
+              <pre>{status.problem.message}</pre>
+            </details>
+          </div>
+        {/if}
       {/if}
     </section>
 
@@ -148,6 +170,16 @@
           oninput={(event) => void save({ ...config, remote: event.currentTarget.value })}
         />
       </label>
+      <p class="muted">{t("private_recommendation")}</p>
+      {#if status?.remoteVisibility === "public"}
+        <p class="problem">
+          {versionedCount === 0
+            ? t("public_warning_none")
+            : versionedCount === 1
+              ? t("public_warning_one")
+              : t("public_warning_many", { count: versionedCount })}
+        </p>
+      {/if}
       <label class="check">
         <input type="checkbox" checked={config.push} onchange={(event) => void save({ ...config, push: event.currentTarget.checked })} />
         {t("field_push")}
@@ -194,6 +226,45 @@
         <p class="muted">{status ? t("modules_empty") : t("modules_empty_stopped")}</p>
       {/if}
     </section>
+
+    {#if status && status.ownRepositories.length > 0}
+      <section aria-labelledby="own-title">
+        <h2 id="own-title">{t("own_repositories")}</h2>
+        <ul>
+          {#each status.ownRepositories as folder (folder)}
+            <li><code>{folder}</code></li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
+
+    <section aria-labelledby="restore-title">
+      <h2 id="restore-title">{t("section_restore")}</h2>
+      <ol>
+        <li>
+          {t("restore_step_clone")}
+          <p class="command">
+            <code>{commands.clone}</code>
+            <button type="button" aria-label={t("copy_clone_label")} onclick={() => copyCommand("clone", commands.clone)}>
+              {copied === "clone" ? t("copied") : t("copy")}
+            </button>
+          </p>
+        </li>
+        <li>{t("restore_step_choose", { button: t("restore_choose_button") })}</li>
+        <li>
+          {t("restore_step_sync")}
+          <p class="command">
+            <code>{commands.sync}</code>
+            <button type="button" aria-label={t("copy_sync_label")} onclick={() => copyCommand("sync", commands.sync)}>
+              {copied === "sync" ? t("copied") : t("copy")}
+            </button>
+          </p>
+        </li>
+      </ol>
+      {#if unversioned.length > 0}
+        <p class="muted">{t("restore_unversioned", { names: unversioned.map((module) => module.name).join(", ") })}</p>
+      {/if}
+    </section>
   {/if}
 </main>
 
@@ -232,6 +303,9 @@
     gap: 0.5rem;
     margin-top: 0.75rem;
   }
+  ol {
+    padding-left: 1.25rem;
+  }
   ul {
     list-style: none;
     margin: 0;
@@ -255,6 +329,11 @@
   }
   .problem {
     color: #c0392b;
+  }
+  pre {
+    margin: 0.25rem 0 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
   .name {
     font-weight: 600;

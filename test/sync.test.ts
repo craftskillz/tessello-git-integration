@@ -10,6 +10,9 @@ import {
   readSeen,
   readStatus,
   relativeTime,
+  restoreCommands,
+  restoreFolder,
+  unversionedModules,
   withDataModule,
   MODULE_ID as MODULE,
 } from "../src/lib/sync.ts";
@@ -203,5 +206,81 @@ describe("withDataModule", () => {
   test("removes an id", () => {
     const config = readConfig({ dataModules: ["@a/y", "@b/x"] });
     assert.deepEqual(withDataModule(config, "@a/y", false).dataModules, ["@b/x"]);
+  });
+});
+
+describe("restoreFolder", () => {
+  test("is the last path segment of the remote without .git", () => {
+    assert.equal(restoreFolder("git@github.com:me/tessello-data.git"), "tessello-data");
+    assert.equal(restoreFolder("https://github.com/me/backup"), "backup");
+  });
+
+  test("ignores a trailing slash and surrounding whitespace", () => {
+    assert.equal(restoreFolder("https://host/x/data.git/"), "data");
+    assert.equal(restoreFolder("  git@github.com:me/data.git \n"), "data");
+  });
+
+  test("is tessello when there is no usable segment", () => {
+    assert.equal(restoreFolder(""), "tessello");
+    assert.equal(restoreFolder("   "), "tessello");
+    assert.equal(restoreFolder("/"), "tessello");
+    assert.equal(restoreFolder(".git"), "tessello");
+  });
+
+  test("is tessello when the name is not safe to paste in a shell", () => {
+    assert.equal(restoreFolder("https://host/me/a b"), "tessello");
+    assert.equal(restoreFolder("https://host/me/x;rm"), "tessello");
+    assert.equal(restoreFolder("https://host/me/.."), "tessello");
+    assert.equal(restoreFolder("https://host/me/."), "tessello");
+  });
+});
+
+describe("restoreCommands", () => {
+  test("clones the remote entered and syncs the folder it creates", () => {
+    assert.deepEqual(restoreCommands("git@github.com:me/data.git"), {
+      clone: "git clone git@github.com:me/data.git data",
+      sync: "npx tessello sync data",
+    });
+  });
+
+  test("stands <remote> in for an empty remote", () => {
+    assert.deepEqual(restoreCommands("  "), {
+      clone: "git clone <remote> tessello",
+      sync: "npx tessello sync tessello",
+    });
+  });
+
+  test("single-quotes a remote with whitespace or shell metacharacters", () => {
+    assert.equal(restoreCommands("https://host/me/my repo.git").clone, "git clone 'https://host/me/my repo.git' tessello");
+    assert.equal(restoreCommands("https://host/a;b").clone, "git clone 'https://host/a;b' tessello");
+  });
+
+  test("escapes a single quote inside the quoted remote", () => {
+    assert.equal(restoreCommands("https://host/it's").clone, "git clone 'https://host/it'\\''s' tessello");
+  });
+});
+
+describe("unversionedModules", () => {
+  const status = readStatus({
+    heartbeat: secondsAgo(0),
+    installed: [
+      { id: "@craftskillz/notes", name: "Notes", folder: "notes" },
+      { id: MODULE, name: "Git Integration", folder: "git" },
+      { id: "@craftskillz/budget", name: "Budget", folder: "budget" },
+      { id: "@craftskillz/todo", name: "Todo", folder: "todo" },
+    ],
+  });
+
+  test("lists the Modules whose data is not versioned, sorted by name, this Module left out", () => {
+    assert.deepEqual(unversionedModules(status, readConfig({ dataModules: ["@craftskillz/notes"] })), [
+      { id: "@craftskillz/budget", name: "Budget" },
+      { id: "@craftskillz/todo", name: "Todo" },
+    ]);
+  });
+
+  test("is empty when every Module is versioned or there is no status", () => {
+    const all = readConfig({ dataModules: ["@craftskillz/notes", "@craftskillz/budget", "@craftskillz/todo"] });
+    assert.deepEqual(unversionedModules(status, all), []);
+    assert.deepEqual(unversionedModules(null, readConfig(null)), []);
   });
 });

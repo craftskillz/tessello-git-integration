@@ -22,7 +22,17 @@ const en = {
   last_push: "Last push {when}",
   no_push: "No push yet",
   problem_no_config: "Enter the URL of your remote repository to start backing up.",
-  problem_generic: "Problem: {message}",
+  problem_push_rejected:
+    "The remote repository has commits this machine does not have. Commits go on locally. Settle the conflict by hand in your Modules folder (git pull, resolve, git push): the alert goes away at the next push.",
+  problem_auth:
+    "git could not authenticate with the remote repository. Check this machine's git access (SSH key or credential helper) by running git push in your Modules folder.",
+  problem_remote_unreachable:
+    "The remote repository could not be reached. Check its URL and your connection. Commits go on locally and the push is retried each round.",
+  problem_git_missing: "git is not installed on this machine. Install it, then run npx tessello sync again.",
+  problem_not_a_modules_folder:
+    "tessello sync runs in a folder that is not a Modules folder. Run it in the folder you chose in Tessello.",
+  problem_since: "since {when}",
+  problem_message: "Message from git",
 
   field_remote: "Remote repository URL",
   field_remote_placeholder: "git@github.com:you/tessello-backup.git",
@@ -48,6 +58,21 @@ const en = {
 
   module_version_label: "Version the data of {name}",
   save_error: "Your settings could not be saved ({reason}).",
+
+  public_warning_none: "Your remote repository is public: anyone can read your backup, including the code of your Modules.",
+  public_warning_one: "Your remote repository is public: anyone can read your backup, including the data of 1 Module.",
+  public_warning_many: "Your remote repository is public: anyone can read your backup, including the data of {count} Modules.",
+  private_recommendation: "Use a private repository: your backup can hold personal data.",
+  own_repositories: "These folders have their own git repository and are not versioned here.",
+
+  section_restore: "Restore on another machine",
+  restore_step_clone: "In a terminal, run:",
+  restore_step_choose: "Open Tessello and click {button} on that folder.",
+  restore_choose_button: "Choose a folder…",
+  restore_step_sync: "In a terminal, run from the folder that contains it:",
+  copy_clone_label: "Copy the clone command",
+  copy_sync_label: "Copy the sync command",
+  restore_unversioned: "The Modules whose data is not versioned will start empty: {names}.",
 };
 
 type Messages = typeof en;
@@ -62,7 +87,7 @@ const fr: Messages = {
 
   engine_stopped: "Le moteur est arrêté : rien n'est sauvegardé.",
   engine_start_instruction:
-    "Ouvrez un terminal dans votre dossier de Modules (le dossier choisi dans Tessello) et lancez :",
+    "Ouvrez un terminal dans votre Dossier des Modules (le dossier choisi dans Tessello) et lancez :",
   engine_command: "npx tessello sync",
   copy: "Copier",
   copied: "Copié",
@@ -74,7 +99,17 @@ const fr: Messages = {
   last_push: "Dernier push {when}",
   no_push: "Aucun push pour l'instant",
   problem_no_config: "Saisissez l'URL de votre dépôt distant pour démarrer la sauvegarde.",
-  problem_generic: "Problème : {message}",
+  problem_push_rejected:
+    "Le dépôt distant a des commits que cette machine n'a pas. Les commits continuent en local. Réglez le conflit à la main dans votre Dossier des Modules (git pull, résolution, git push), l'alerte disparaîtra au push suivant.",
+  problem_auth:
+    "git n'a pas pu s'authentifier auprès du dépôt distant. Vérifiez l'accès git de cette machine (clé SSH ou assistant d'identifiants) en lançant git push dans votre Dossier des Modules.",
+  problem_remote_unreachable:
+    "Le dépôt distant est injoignable. Vérifiez son URL et votre connexion. Les commits continuent en local et le push est retenté à chaque tour.",
+  problem_git_missing: "git n'est pas installé sur cette machine. Installez-le, puis relancez npx tessello sync.",
+  problem_not_a_modules_folder:
+    "tessello sync tourne dans un dossier qui n'est pas un Dossier des Modules. Lancez-le dans le dossier choisi dans Tessello.",
+  problem_since: "depuis {when}",
+  problem_message: "Message de git",
 
   field_remote: "URL du dépôt distant",
   field_remote_placeholder: "git@github.com:vous/tessello-backup.git",
@@ -100,6 +135,21 @@ const fr: Messages = {
 
   module_version_label: "Versionner les données de {name}",
   save_error: "Vos réglages n'ont pas pu être enregistrés ({reason}).",
+
+  public_warning_none: "Votre dépôt distant est public : tout le monde peut lire votre sauvegarde, y compris le code de vos Modules.",
+  public_warning_one: "Votre dépôt distant est public : tout le monde peut lire votre sauvegarde, y compris les données de 1 Module.",
+  public_warning_many: "Votre dépôt distant est public : tout le monde peut lire votre sauvegarde, y compris les données de {count} Modules.",
+  private_recommendation: "Utilisez un dépôt privé : votre sauvegarde peut contenir des données personnelles.",
+  own_repositories: "Ces dossiers ont leur propre dépôt git et ne sont pas versionnés ici.",
+
+  section_restore: "Restaurer sur une autre machine",
+  restore_step_clone: "Dans un terminal, lancez :",
+  restore_step_choose: "Ouvrez Tessello et cliquez sur {button} pour ce dossier.",
+  restore_choose_button: "Choisir un dossier…",
+  restore_step_sync: "Dans un terminal, depuis le dossier qui le contient, lancez :",
+  copy_clone_label: "Copier la commande de clonage",
+  copy_sync_label: "Copier la commande de synchronisation",
+  restore_unversioned: "Les Modules dont les données ne sont pas versionnées démarreront vides : {names}.",
 };
 
 export type MessageKey = keyof Messages;
