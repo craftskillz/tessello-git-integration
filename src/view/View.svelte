@@ -1,11 +1,12 @@
 <script lang="ts">
   // The state of the backup and its settings: reads `status` (written by the engine), writes `config` and `seen`.
   import type { ConnectedModule } from "@tessello/sdk";
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import { t } from "../lib/i18n.ts";
   import {
     type SyncConfig,
     type SyncStatus,
+    type ViewSection,
     isEngineRunning,
     listedModules,
     parseInterval,
@@ -21,6 +22,9 @@
   let { host }: { host: ConnectedModule } = $props();
 
   const POLL_MS = 3000;
+
+  /** The heading of each section the Widget can open the View on. */
+  const SECTION_HEADINGS: Record<ViewSection, string> = { engine: "engine-title", settings: "settings-title" };
 
   const PROBLEM_TEXT = {
     "push-rejected": "problem_push_rejected",
@@ -93,6 +97,15 @@
     }
   }
 
+  /** Scrolls the section the Widget asked for into view; other values are ignored. */
+  async function showSection(params: Record<string, string> | undefined): Promise<void> {
+    const section = params?.section;
+    if (section !== "engine" && section !== "settings") return;
+    const id = SECTION_HEADINGS[section];
+    await tick();
+    document.getElementById(id)?.scrollIntoView();
+  }
+
   onMount(() => {
     let visible = true;
     void (async () => {
@@ -102,7 +115,9 @@
       storedSeen = seenAtOpen;
       await refresh();
       loaded = true;
+      await showSection(host.context.params);
     })();
+    const stopNavigation = host.onNavigationParams((params) => void showSection(params));
     const timer = setInterval(() => visible && loaded && void refresh(), POLL_MS);
     const stop = host.onVisibilityChange((isVisible) => {
       visible = isVisible;
@@ -111,6 +126,7 @@
     return () => {
       clearInterval(timer);
       stop();
+      stopNavigation();
     };
   });
 </script>

@@ -48,6 +48,11 @@ const en = {
   modules_secrets_warning:
     "The data of a Module can hold secrets, such as API tokens: only version the data of Modules you trust in your remote repository.",
 
+  widget_ok: "Up to date",
+  widget_alert: "Alert",
+  widget_stopped: "Stopped",
+  widget_label: "Open Git Integration: {state}, {commit}",
+
   time_now: "just now",
   time_minutes: "{count} minutes ago",
   time_minutes_one: "1 minute ago",
@@ -124,6 +129,11 @@ const fr: Messages = {
   modules_empty_stopped: "La liste apparaît dès que le moteur a tourné.",
   modules_secrets_warning:
     "Les données d'un Module peuvent contenir des secrets, comme des jetons d'API : ne versionnez que les données des Modules en lesquels vous avez confiance, dans votre dépôt distant.",
+
+  widget_ok: "À jour",
+  widget_alert: "Alerte",
+  widget_stopped: "Arrêté",
+  widget_label: "Ouvrir Git Integration : {state}, {commit}",
 
   time_now: "à l'instant",
   time_minutes: "il y a {count} minutes",

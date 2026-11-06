@@ -13,6 +13,7 @@ import {
   restoreCommands,
   restoreFolder,
   unversionedModules,
+  widgetState,
   withDataModule,
   MODULE_ID as MODULE,
 } from "../src/lib/sync.ts";
@@ -119,6 +120,52 @@ describe("isEngineRunning", () => {
 
   test("is stopped when the heartbeat cannot be parsed", () => {
     assert.equal(isEngineRunning(readStatus({ heartbeat: "yesterday" }), null, NOW), false);
+  });
+});
+
+describe("widgetState", () => {
+  const problem = (kind: string) => ({ kind, message: "m", since: secondsAgo(500) });
+  const status = (extra: Record<string, unknown> = {}, seconds = 5) => readStatus({ heartbeat: secondsAgo(seconds), ...extra });
+
+  test("is stopped without a status", () => {
+    assert.deepEqual(widgetState(null, null, NOW), { kind: "stopped" });
+  });
+
+  test("is up to date when the engine runs with no problem", () => {
+    assert.deepEqual(widgetState(status(), null, NOW), { kind: "ok" });
+    assert.deepEqual(widgetState(status({ remoteVisibility: "private" }), null, NOW), { kind: "ok" });
+    assert.deepEqual(widgetState(status({ remoteVisibility: "unknown" }), null, NOW), { kind: "ok" });
+  });
+
+  test("alerts on the engine section for a problem of a running engine", () => {
+    for (const kind of ["push-rejected", "auth", "remote-unreachable", "git-missing", "not-a-modules-folder"]) {
+      assert.deepEqual(widgetState(status({ problem: problem(kind) }), null, NOW), { kind: "alert", section: "engine" }, kind);
+    }
+  });
+
+  test("alerts on the settings section when there is no config", () => {
+    assert.deepEqual(widgetState(status({ problem: problem("no-config") }), null, NOW), { kind: "alert", section: "settings" });
+  });
+
+  test("alerts on the settings section for a public remote", () => {
+    assert.deepEqual(widgetState(status({ remoteVisibility: "public" }), null, NOW), { kind: "alert", section: "settings" });
+  });
+
+  test("a problem wins over a public remote", () => {
+    const pushRejected = status({ problem: problem("push-rejected"), remoteVisibility: "public" });
+    assert.deepEqual(widgetState(pushRejected, null, NOW), { kind: "alert", section: "engine" });
+  });
+
+  test("a stale heartbeat is stopped, whatever the problem or the remote", () => {
+    assert.deepEqual(widgetState(status({ problem: problem("auth") }, 131), null, NOW), { kind: "stopped" });
+    assert.deepEqual(widgetState(status({ remoteVisibility: "public" }, 131), null, NOW), { kind: "stopped" });
+  });
+
+  test("follows the interval of the config for staleness", () => {
+    const config = readConfig({ intervalSeconds: 600 });
+    const beat = (seconds: number) => status({ remoteVisibility: "public" }, seconds);
+    assert.deepEqual(widgetState(beat(1210), config, NOW), { kind: "alert", section: "settings" });
+    assert.deepEqual(widgetState(beat(1211), config, NOW), { kind: "stopped" });
   });
 });
 

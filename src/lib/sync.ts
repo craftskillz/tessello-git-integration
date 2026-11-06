@@ -106,6 +106,22 @@ export function isEngineRunning(status: SyncStatus | null, config: SyncConfig | 
   return now - beat <= (2 * interval + 10) * 1000;
 }
 
+/** A section of the View the Widget can open it on (`params.section`). */
+export type ViewSection = "engine" | "settings";
+
+export type WidgetState =
+  | { kind: "stopped" }
+  | { kind: "ok" }
+  | { kind: "alert"; section: ViewSection };
+
+/** What the Widget shows: stopped (same rule as the View), an alert (a problem of a running engine, or a public remote) with the View's section that explains it, or up to date. */
+export function widgetState(status: SyncStatus | null, config: SyncConfig | null, now: number): WidgetState {
+  if (!status || !isEngineRunning(status, config, now)) return { kind: "stopped" };
+  if (status.problem) return { kind: "alert", section: status.problem.kind === "no-config" ? "settings" : "engine" };
+  if (status.remoteVisibility === "public") return { kind: "alert", section: "settings" };
+  return { kind: "ok" };
+}
+
 /** A date as "3 hours ago" in the current language; the future and unreadable dates read as "just now". */
 export function relativeTime(at: string, now: number): string {
   const time = Date.parse(at);

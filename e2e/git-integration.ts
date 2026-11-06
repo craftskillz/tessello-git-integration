@@ -7,7 +7,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { after, before } from "node:test";
 import { type Browser, chromium, type Page } from "playwright";
-import { createTestHost, type FolderServer, serveFolder, slowDownCpu, type TestHost, type TestHostOptions, type TestSurface } from "@tessello/sdk/testing";
+import { createTestHost, type FolderServer, serveFolder, slowDownCpu, type TestHost, type TestHostOptions, type TestSurface, WIDGET_SIZES } from "@tessello/sdk/testing";
 
 const DIST = fileURLToPath(new URL("../dist/", import.meta.url));
 const manifest = JSON.parse(await readFile(`${DIST}manifest.json`, "utf8").catch(() => {
@@ -40,18 +40,33 @@ interface OpenOptions {
   storage?: TestHostOptions["storage"];
   locale?: string;
   viewport?: { width: number; height: number };
+  theme?: TestHostOptions["theme"];
+  /** View only: the params it is opened with, as from the Widget. */
+  params?: Record<string, string>;
 }
 
 /** Opens the View on a Test Host of its own and waits until it shows its settings. */
 export async function openView(options: OpenOptions = {}): Promise<Opened> {
-  const host = createTestHost({ module, storage: options.storage, locale: options.locale });
+  const host = createTestHost({ module, storage: options.storage, locale: options.locale, theme: options.theme });
   const context = await browser.newContext(options.viewport ? { viewport: options.viewport } : {});
   const page = await context.newPage();
   await slowDownCpu(page);
-  const surface = await host.attach(page, { surface: "view" });
+  const surface = await host.attach(page, { surface: "view", params: options.params });
   await page.goto(`${server.url}/${manifest.view.entry}`);
   await page.getByRole("heading", { level: 1 }).waitFor();
   await page.locator("section[aria-labelledby]").first().waitFor();
+  return { page, host, surface };
+}
+
+/** Opens the Widget at its size on a Test Host of its own. */
+export async function openWidget(options: Omit<OpenOptions, "viewport" | "params"> = {}): Promise<Opened> {
+  const host = createTestHost({ module, storage: options.storage, locale: options.locale, theme: options.theme });
+  const context = await browser.newContext({ viewport: WIDGET_SIZES[manifest.widget.size as "S" | "M" | "L"] });
+  const page = await context.newPage();
+  await slowDownCpu(page);
+  const surface = await host.attach(page, { surface: "widget" });
+  await page.goto(`${server.url}/${manifest.widget.entry}`);
+  await page.getByRole("button").waitFor();
   return { page, host, surface };
 }
 

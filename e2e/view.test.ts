@@ -236,3 +236,24 @@ describe("language and layout", () => {
     assert.ok((await stopped.page.evaluate(() => document.documentElement.scrollWidth)) <= 360);
   });
 });
+
+describe("the section asked for by the Widget", () => {
+  const SMALL = { width: 600, height: 300 };
+  const inViewport = (page: import("playwright").Page) =>
+    page.locator("#settings-title").evaluate((heading) => {
+      const box = heading.getBoundingClientRect();
+      return box.top >= 0 && box.bottom <= innerHeight;
+    });
+
+  test("a View opened with a section scrolls it into view", async () => {
+    const { page } = await openView({ viewport: SMALL, params: { section: "settings" } });
+    await until(() => inViewport(page), "the settings section to be in view");
+  });
+
+  test("a View already open scrolls to the section of the next openView", async () => {
+    const { page, host } = await openView({ viewport: SMALL, storage: { status: engineStatus() } });
+    assert.equal(await inViewport(page), false);
+    host.openView({ section: "settings" });
+    await until(() => inViewport(page), "the settings section to be in view");
+  });
+});
