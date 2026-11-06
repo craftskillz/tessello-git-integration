@@ -1,0 +1,16 @@
+{
+  "convention": 1,
+  "id": "@craftskillz/my-module",
+  "name": "My Module",
+  "version": "0.0.0",
+  "description": "A Tessello Module: say here, in one sentence, what it does for the User.",
+  "icon": "icon.svg",
+  "view": {
+    "entry": "view/index.html"
+  },
+  "guide": "guide/guide.md",
+  "widget": {
+    "entry": "widget/index.html",
+    "size": "S"
+  }
+}
