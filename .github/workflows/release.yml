@@ -1,5 +1,5 @@
 # On a tag v<version>, builds the package and publishes it on GitHub Pages as <version>.zip, served at
-# https://craftskillz.github.io/tessello-my-module/<version>.zip with Access-Control-Allow-Origin: *. A published version is
+# https://craftskillz.github.io/tessello-git-integration/<version>.zip with Access-Control-Allow-Origin: *. A published version is
 # never overwritten: its listing in the Marketplace is pinned to the fingerprint of its bytes.
 name: Release
 

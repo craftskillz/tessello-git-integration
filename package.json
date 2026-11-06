@@ -1,14 +1,14 @@
 {
-  "name": "@craftskillz/my-module",
+  "name": "@craftskillz/git-integration",
   "version": "0.0.0",
   "private": true,
-  "description": "My Module: a Tessello Module.",
+  "description": "Git Integration: a Tessello Module.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/craftskillz/tessello-my-module.git"
+    "url": "git+https://github.com/craftskillz/tessello-git-integration.git"
   },
-  "homepage": "https://github.com/craftskillz/tessello-my-module#readme",
+  "homepage": "https://github.com/craftskillz/tessello-git-integration#readme",
   "type": "module",
   "engines": {
     "node": ">=24"

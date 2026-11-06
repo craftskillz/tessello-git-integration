@@ -1,21 +1,15 @@
-<!-- template -->
-> **This is the Svelte template of a Tessello Module** (Svelte 5, bundled with esbuild). For a template without Svelte, see [tessello-template-typescript](https://github.com/craftskillz/tessello-template-typescript).
->
-> - From the `tessello` repository: `just new-module <name> svelte` creates `craftskillz/tessello-<name>` from it, renames everything, turns on GitHub Pages and clones it.
-> - By hand: **Use this template** on GitHub. Then replace `my-module` and `My Module` everywhere, with your own Namespace in place of `craftskillz` (in `manifest.json`, `package.json`, `package-lock.json`, the User guide, this README, the pages and `.github/workflows/release.yml`). Delete this section, create an empty `gh-pages` branch, and turn on GitHub Pages from it.
-<!-- /template -->
-# My Module
+# Git Integration
 
 A Tessello Module: say here, in one sentence, what it does for the User.
 
-My Module is a Module of [Tessello](https://github.com/craftskillz/tessello), a composable web app where you build your space from Modules: each one a View, and a Widget on the Home. Its Identifier is `@craftskillz/my-module`. Everything it keeps stays in your Tessello space, on your computer.
+Git Integration is a Module of [Tessello](https://github.com/craftskillz/tessello), a composable web app where you build your space from Modules: each one a View, and a Widget on the Home. Its Identifier is `@craftskillz/git-integration`. Everything it keeps stays in your Tessello space, on your computer.
 
 What it does is in its User guide: [guide/guide.md](guide/guide.md), also shown inside Tessello (ⓘ, then **User guide**).
 
 ## Install
 
-- From the Marketplace of Tessello, once My Module is listed there: https://tessello-marketplace.pages.dev/
-- Or drop a package onto Tessello: every version is published at `https://craftskillz.github.io/tessello-my-module/<version>.zip`.
+- From the Marketplace of Tessello, once Git Integration is listed there: https://tessello-marketplace.pages.dev/
+- Or drop a package onto Tessello: every version is published at `https://craftskillz.github.io/tessello-git-integration/<version>.zip`.
 
 ## Develop
 

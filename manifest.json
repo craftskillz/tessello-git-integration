@@ -1,7 +1,7 @@
 {
   "convention": 1,
-  "id": "@craftskillz/my-module",
-  "name": "My Module",
+  "id": "@craftskillz/git-integration",
+  "name": "Git Integration",
   "version": "0.0.0",
   "description": "A Tessello Module: say here, in one sentence, what it does for the User.",
   "icon": "icon.svg",

@@ -26,7 +26,7 @@
 </script>
 
 <main>
-  <h1>My Module</h1>
+  <h1>Git Integration</h1>
   <p class="count" aria-label="Count">{count}</p>
   <div class="actions">
     <button class="primary" onclick={() => run(() => increment(host.storage))}>Add one</button>

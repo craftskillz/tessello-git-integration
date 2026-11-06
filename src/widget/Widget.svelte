@@ -13,9 +13,9 @@
   });
 </script>
 
-<button class="widget" onclick={() => host.openView()} aria-label="Open My Module">
+<button class="widget" onclick={() => host.openView()} aria-label="Open Git Integration">
   <span class="count">{count}</span>
-  <span class="label">My Module</span>
+  <span class="label">Git Integration</span>
 </button>
 
 <style>
