@@ -105,9 +105,9 @@ While the engine is running, each problem it meets is shown in the section **Eng
 | Alert | What to do |
 |---|---|
 | **Enter the URL of your remote repository to start backing up.** | The command has no settings to read yet: enter your repository in **Remote repository URL**. |
-| **The remote repository has commits this machine does not have.** | Your repository was changed from elsewhere, such as another computer. The command never merges for you, and keeps committing on this computer meanwhile. In a terminal, in your Modules folder: `git pull`, settle any conflict, then `git push`. The alert goes away at the next push. |
-| **git could not authenticate with the remote repository.** | Check this computer's access to the repository by running `git push` in your Modules folder: add your SSH key, or log in with your credential helper. |
-| **The remote repository could not be reached.** | Check its URL and your connection. The commits go on locally, and the push is tried again at each round. |
+| **The remote repository has commits this machine does not have.** | Your repository was changed from elsewhere, such as another computer. The command never merges for you, and keeps committing on this computer meanwhile. In a terminal, in your Modules folder: `git pull origin main`, settle any conflict, then `git push -u origin main`. A repository created with a README or a licence is in this case from the first push: create it empty, or add `--allow-unrelated-histories` to the pull. The alert goes away at the next push. |
+| **git could not authenticate with the remote repository.** | Check this computer's access to the repository by running `git push -u origin main` in your Modules folder (a plain `git push` only works after a first push has succeeded): add your SSH key, or log in with your credential helper, such as `gh auth setup-git` for GitHub over HTTPS. |
+| **The remote repository could not be reached.** | Check its URL and your connection. Some networks block SSH, the `git@github.com:…` addresses: enter the HTTPS address of your repository instead, `https://github.com/you/tessello-backup.git`. The commits go on locally, and the push is tried again at each round. |
 | **git is not installed on this machine.** | Install [git](https://git-scm.com/), then run `npx tessello sync` again. |
 | **Your remote repository is public** (under **Settings**) | See [Secrets and a private repository](#secrets-and-a-private-repository). |
 

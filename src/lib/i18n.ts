@@ -23,11 +23,11 @@ const en = {
   no_push: "No push yet",
   problem_no_config: "Enter the URL of your remote repository to start backing up.",
   problem_push_rejected:
-    "The remote repository has commits this machine does not have. Commits go on locally. Settle the conflict by hand in your Modules folder (git pull, resolve, git push): the alert goes away at the next push.",
+    "The remote repository has commits this machine does not have. Commits go on locally. Settle the conflict by hand in your Modules folder (git pull origin main, resolve, git push -u origin main): the alert goes away at the next push.",
   problem_auth:
-    "git could not authenticate with the remote repository. Check this machine's git access (SSH key or credential helper) by running git push in your Modules folder.",
+    "git could not authenticate with the remote repository. Check this machine's git access (SSH key or credential helper) by running git push -u origin main in your Modules folder.",
   problem_remote_unreachable:
-    "The remote repository could not be reached. Check its URL and your connection. Commits go on locally and the push is retried each round.",
+    "The remote repository could not be reached. Check its URL and your connection; if your network blocks SSH, use the repository's HTTPS address. Commits go on locally and the push is retried each round.",
   problem_git_missing: "git is not installed on this machine. Install it, then run npx tessello sync again.",
   problem_not_a_modules_folder:
     "tessello sync runs in a folder that is not a Modules folder. Run it in the folder you chose in Tessello.",
@@ -105,11 +105,11 @@ const fr: Messages = {
   no_push: "Aucun push pour l'instant",
   problem_no_config: "Saisissez l'URL de votre dépôt distant pour démarrer la sauvegarde.",
   problem_push_rejected:
-    "Le dépôt distant a des commits que cette machine n'a pas. Les commits continuent en local. Réglez le conflit à la main dans votre Dossier des Modules (git pull, résolution, git push), l'alerte disparaîtra au push suivant.",
+    "Le dépôt distant a des commits que cette machine n'a pas. Les commits continuent en local. Réglez le conflit à la main dans votre Dossier des Modules (git pull origin main, résolution, git push -u origin main), l'alerte disparaîtra au push suivant.",
   problem_auth:
-    "git n'a pas pu s'authentifier auprès du dépôt distant. Vérifiez l'accès git de cette machine (clé SSH ou assistant d'identifiants) en lançant git push dans votre Dossier des Modules.",
+    "git n'a pas pu s'authentifier auprès du dépôt distant. Vérifiez l'accès git de cette machine (clé SSH ou assistant d'identifiants) en lançant git push -u origin main dans votre Dossier des Modules.",
   problem_remote_unreachable:
-    "Le dépôt distant est injoignable. Vérifiez son URL et votre connexion. Les commits continuent en local et le push est retenté à chaque tour.",
+    "Le dépôt distant est injoignable. Vérifiez son URL et votre connexion ; si votre réseau bloque SSH, utilisez l'adresse HTTPS du dépôt. Les commits continuent en local et le push est retenté à chaque tour.",
   problem_git_missing: "git n'est pas installé sur cette machine. Installez-le, puis relancez npx tessello sync.",
   problem_not_a_modules_folder:
     "tessello sync tourne dans un dossier qui n'est pas un Dossier des Modules. Lancez-le dans le dossier choisi dans Tessello.",
