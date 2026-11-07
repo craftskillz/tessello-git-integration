@@ -1,5 +1,6 @@
 <script lang="ts">
-  // The Widget (size S): the Module's name, a dot and a word for the state of the backup, the time of the last commit, and a way into the View.
+  // The Widget (size S): the Module's name and its Open button, as in the other Modules, then a dot and a word for the state
+  // of the backup and the time of the last commit. Open goes to the section that explains an alert.
   import type { ConnectedModule } from "@tessello/sdk";
   import { onMount } from "svelte";
   import { t } from "../lib/i18n.ts";
@@ -50,47 +51,64 @@
   });
 </script>
 
-<button class="widget" onclick={open} aria-label={loaded ? t("widget_label", { state: word, commit: lastCommit }) : t("title")}>
-  <span class="name">{t("title")}</span>
+<div class="widget">
+  <header>
+    <h1>{t("title")}</h1>
+    <button type="button" class="pill" onclick={open}>{t("widget_open")} ↗</button>
+  </header>
+
   {#if loaded}
-    <span class="state"><span class="dot {state.kind}" aria-hidden="true"></span>{word}</span>
-    <span class="commit">{lastCommit}</span>
+    <p class="state"><span class="dot {state.kind}" aria-hidden="true"></span>{word}</p>
+    <p class="commit">{lastCommit}</p>
   {/if}
-</button>
+</div>
 
 <style>
+  /* The Widget fills its cell and never scrolls (CONVENTION.md §7.1): what does not fit is cut off. */
   .widget {
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.5rem;
+    gap: 8px;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 10px 12px;
     overflow: hidden;
-    border: none;
-    border-radius: 0;
-    background: var(--bg);
-    text-align: center;
+    font-size: 12px;
   }
-  .name {
-    max-width: 100%;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--muted);
+  header {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  h1 {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+    /* A size S cell is too narrow for the name and Open on one line: the name wraps between its words rather than being
+       cut off. */
+  }
+  .pill {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 10px;
+    background: var(--panel);
+    color: var(--accent);
+    font: inherit;
+    font-size: 11px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+  .pill:hover {
+    border-color: var(--accent);
   }
   .state {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    font-weight: 600;
-    color: var(--ink);
+    gap: 6px;
+    margin: 0;
+    font-weight: 700;
   }
   .dot {
     flex: none;
@@ -106,8 +124,10 @@
     background: #d9482b;
   }
   .commit {
-    max-width: 100%;
-    font-size: 0.8rem;
+    margin: 0;
     color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>

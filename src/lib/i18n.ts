@@ -51,7 +51,7 @@ const en = {
   widget_ok: "Up to date",
   widget_alert: "Alert",
   widget_stopped: "Stopped",
-  widget_label: "Open Git Integration: {state}, {commit}",
+  widget_open: "Open",
 
   time_now: "just now",
   time_minutes: "{count} minutes ago",
@@ -133,7 +133,7 @@ const fr: Messages = {
   widget_ok: "À jour",
   widget_alert: "Alerte",
   widget_stopped: "Arrêté",
-  widget_label: "Ouvrir Git Integration : {state}, {commit}",
+  widget_open: "Ouvrir",
 
   time_now: "à l'instant",
   time_minutes: "il y a {count} minutes",

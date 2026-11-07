@@ -11,58 +11,59 @@ useBrowser();
 const CONFIG = { remote: "git@github.com:me/backup.git", push: true, intervalSeconds: 60, dataModules: [] };
 const problem = { kind: "auth", message: "Permission denied", since: minutesAgo(10) };
 
-test("without a status the Widget says Stopped, and a click opens the View without params", async () => {
+test("without a status the Widget says Stopped, and Open opens the View without params", async () => {
   const { page, host } = await openWidget();
-  await page.getByRole("button", { name: /Stopped/ }).waitFor();
+  await page.getByText("Stopped", { exact: true }).waitFor();
   await page.getByText("No commit yet").waitFor();
-  await page.getByRole("button").click();
+  await page.getByRole("button", { name: "Open ↗" }).click();
   await until(() => host.openedViews.length === 1, "the click to open the View");
   assert.deepEqual(host.openedViews, [{}]);
 });
 
-test("a running engine without problem says Up to date with the time of the last commit, and a click opens the View without params", async () => {
+test("a running engine without problem says Up to date with the time of the last commit, and Open opens the View without params", async () => {
   const { page, host } = await openWidget({
     storage: { config: CONFIG, status: engineStatus({ lastCommit: { sha: "abc", at: minutesAgo(3), modules: [] } }) },
   });
-  await page.getByRole("button", { name: /Up to date/ }).waitFor();
+  await page.getByText("Up to date", { exact: true }).waitFor();
   await page.getByText("3 minutes ago").waitFor();
-  // Among the other Widgets of the Home, the state alone would not say which Module it is.
-  await page.getByText("Git Integration", { exact: true }).waitFor({ timeout: 2000 });
-  await page.getByRole("button").click();
+  // Among the other Widgets of the Home, the state alone would not say which Module it is: a heading names it, as in
+  // the other Modules, and its text can be selected.
+  await page.getByRole("heading", { name: "Git Integration" }).waitFor({ timeout: 2000 });
+  await page.getByRole("button", { name: "Open ↗" }).click();
   await until(() => host.openedViews.length === 1, "the click to open the View");
   assert.deepEqual(host.openedViews, [{}]);
 });
 
-test("a problem says Alert and a click opens the View on its engine section", async () => {
+test("a problem says Alert and Open opens the View on its engine section", async () => {
   const { page, host } = await openWidget({ storage: { config: CONFIG, status: engineStatus({ problem }) } });
-  await page.getByRole("button", { name: /Alert/ }).waitFor();
-  await page.getByRole("button").click();
+  await page.getByText("Alert", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "Open ↗" }).click();
   await until(() => host.openedViews.length === 1, "the click to open the View");
   assert.deepEqual(host.openedViews, [{ section: "engine" }]);
 });
 
-test("a public remote says Alert and a click opens the View on its settings section", async () => {
+test("a public remote says Alert and Open opens the View on its settings section", async () => {
   const { page, host } = await openWidget({ storage: { config: CONFIG, status: engineStatus({ remoteVisibility: "public" }) } });
-  await page.getByRole("button", { name: /Alert/ }).waitFor();
-  await page.getByRole("button").click();
+  await page.getByText("Alert", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "Open ↗" }).click();
   await until(() => host.openedViews.length === 1, "the click to open the View");
   assert.deepEqual(host.openedViews, [{ section: "settings" }]);
 });
 
 test("the Widget reads the status again when it is shown after being hidden", async () => {
   const { page, host, surface } = await openWidget({ storage: { config: CONFIG, status: engineStatus() } });
-  await page.getByRole("button", { name: /Up to date/ }).waitFor();
+  await page.getByText("Up to date", { exact: true }).waitFor();
   surface.setVisible(false);
   await host.storage.set("status", engineStatus({ problem }));
   surface.setVisible(true);
-  await page.getByRole("button", { name: /Alert/ }).waitFor();
+  await page.getByText("Alert", { exact: true }).waitFor();
 });
 
 test("the Widget speaks French", async () => {
   const { page } = await openWidget({ locale: "fr", storage: { config: CONFIG, status: engineStatus({ lastCommit: { sha: "abc", at: minutesAgo(180), modules: [] } }) } });
-  await page.getByRole("button", { name: /À jour/ }).waitFor();
+  await page.getByText("À jour", { exact: true }).waitFor();
   await page.getByText("il y a 3 heures").waitFor();
-  assert.match((await page.getByRole("button").getAttribute("aria-label")) ?? "", /Ouvrir Git Integration/);
+  await page.getByRole("button", { name: "Ouvrir ↗" }).waitFor();
 });
 
 for (const theme of ["light", "dark"] as const) {
@@ -73,7 +74,7 @@ for (const theme of ["light", "dark"] as const) {
         locale,
         storage: { config: CONFIG, status: engineStatus({ lastCommit: { sha: "abc", at: minutesAgo(180), modules: [] } }) },
       });
-      await page.getByRole("button", { name: locale === "fr" ? /À jour/ : /Up to date/ }).waitFor();
+      await page.getByText(locale === "fr" ? "À jour" : "Up to date", { exact: true }).waitFor();
       assert.ok(
         await page.locator("body").evaluate((body) => body.scrollHeight <= innerHeight && body.scrollWidth <= innerWidth),
         "the Widget does not scroll",
