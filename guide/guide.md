@@ -11,6 +11,7 @@ The work is done by a command, `npx tessello sync`, that you run in your Modules
 ## Contents
 
 - [Getting started](#getting-started)
+- [SSH or HTTPS, and pushing by hand](#ssh-or-https-and-pushing-by-hand)
 - [Keep the command running](#keep-the-command-running)
 - [What is backed up, and what is not](#what-is-backed-up-and-what-is-not)
 - [Secrets and a private repository](#secrets-and-a-private-repository)
@@ -43,6 +44,25 @@ The settings:
 | **Frequency (seconds)** | How often the command looks for changes: 60 seconds by default, from 10 to 3600. |
 
 The command creates the git repository of the folder if there is none, on the branch `main`. It never pulls, merges or forces a push: what is on your repository is never overwritten.
+
+## SSH or HTTPS, and pushing by hand
+
+Your repository has two addresses. Enter the one your computer can already push to:
+
+| Address | Example | git uses |
+|---|---|---|
+| SSH | `git@github.com:you/tessello-backup.git` | Your SSH key. Some networks block SSH: the push then hangs until **The remote repository could not be reached.** |
+| HTTPS | `https://github.com/you/tessello-backup.git` | A credential helper. For GitHub, `gh auth setup-git` sets one up from the [GitHub CLI](https://cli.github.com/). |
+
+To check, push once by hand from your Modules folder, after the command has made its first commit:
+
+```sh
+git push -u origin main
+```
+
+Until a first push has succeeded, the folder's `main` has no upstream: a plain `git push` only answers **The current branch main has no upstream branch**. The command pushes with `-u`, so once it has pushed, `git push` and `git pull` work alone.
+
+To change the address, edit **Remote repository URL**: at its next round, the command sets it as `origin` and pushes there.
 
 ## Keep the command running
 
