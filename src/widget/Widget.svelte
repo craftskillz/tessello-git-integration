@@ -1,5 +1,5 @@
 <script lang="ts">
-  // The Widget (size S): a dot and a word for the state of the backup, the time of the last commit, and a way into the View.
+  // The Widget (size S): the Module's name, a dot and a word for the state of the backup, the time of the last commit, and a way into the View.
   import type { ConnectedModule } from "@tessello/sdk";
   import { onMount } from "svelte";
   import { t } from "../lib/i18n.ts";
@@ -51,6 +51,7 @@
 </script>
 
 <button class="widget" onclick={open} aria-label={loaded ? t("widget_label", { state: word, commit: lastCommit }) : t("title")}>
+  <span class="name">{t("title")}</span>
   {#if loaded}
     <span class="state"><span class="dot {state.kind}" aria-hidden="true"></span>{word}</span>
     <span class="commit">{lastCommit}</span>
@@ -73,6 +74,16 @@
     border-radius: 0;
     background: var(--bg);
     text-align: center;
+  }
+  .name {
+    max-width: 100%;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .state {
     display: flex;

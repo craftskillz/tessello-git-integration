@@ -26,6 +26,8 @@ test("a running engine without problem says Up to date with the time of the last
   });
   await page.getByRole("button", { name: /Up to date/ }).waitFor();
   await page.getByText("3 minutes ago").waitFor();
+  // Among the other Widgets of the Home, the state alone would not say which Module it is.
+  await page.getByText("Git Integration", { exact: true }).waitFor({ timeout: 2000 });
   await page.getByRole("button").click();
   await until(() => host.openedViews.length === 1, "the click to open the View");
   assert.deepEqual(host.openedViews, [{}]);

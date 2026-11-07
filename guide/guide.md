@@ -106,7 +106,7 @@ Git Integration and `tessello sync` keep no password or token. The push uses the
 
 ## On the Home: the Widget
 
-Git Integration puts a small Widget on your Home: the state of the backup at a glance, and when the last commit was made.
+Git Integration puts a small Widget on your Home: its name, the state of the backup at a glance, and when the last commit was made.
 
 ![The Git Integration Widget on the Home](images/widget.png)
 
