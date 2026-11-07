@@ -1,6 +1,6 @@
 {
   "name": "@craftskillz/git-integration",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "Back up your Tessello space to a git repository: set up tessello sync and see how the backup is going.",
   "license": "MIT",

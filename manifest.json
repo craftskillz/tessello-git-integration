@@ -2,7 +2,7 @@
   "convention": 1,
   "id": "@craftskillz/git-integration",
   "name": "Git Integration",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Back up your Tessello space to a git repository: set up tessello sync and see how the backup is going.",
   "icon": "icon.svg",
   "view": {
